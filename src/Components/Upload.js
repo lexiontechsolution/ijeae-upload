@@ -77,7 +77,7 @@ const Upload = () => {
       console.log("pdf", pdfFile);
 
       const response = await axios.post(
-        "https://publicationbackend-1.onrender.com/publications",
+        "https://publicationbackend.onrender.com/publications",
         data
         // {
         //   headers: {
