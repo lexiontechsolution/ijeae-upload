@@ -14,7 +14,7 @@ const Publications = () => {
     const fetchPublications = async () => {
       try {
         const response = await fetch(
-          "https://publication-backend-klr9.onrender.com/publications"
+          "https://publicationbackend.onrender.com/publications"
         );
 
         if (!response.ok) throw new Error("Failed to fetch publications.");
