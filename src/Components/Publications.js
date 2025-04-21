@@ -14,7 +14,7 @@ const Publications = () => {
     const fetchPublications = async () => {
       try {
         const response = await fetch(
-          "https://publicationbackend.onrender.com/publications"
+          "https://61.2.79.154:15002/publications"
         );
 
         if (!response.ok) throw new Error("Failed to fetch publications.");
