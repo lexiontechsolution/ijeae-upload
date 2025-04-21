@@ -9,7 +9,7 @@
 //     const fetchPDF = async () => {
 //       try {
 //         const response = await fetch(
-//           `https://publication-backend-klr9.onrender.com/publications/${id}/pdf`
+//           `https://publicationbackend.onrender.com/publications/${id}/pdf`
 //         );
 //         if (!response.ok) throw new Error("Failed to fetch PDF.");
 
