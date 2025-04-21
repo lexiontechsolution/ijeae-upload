@@ -1,0 +1,75 @@
+/* Header container */
+.header-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    /* Align items vertically in the center */
+    justify-content: center;
+    /* Center the content horizontally */
+    padding: 10px;
+    background-color: #f1f1f1;
+    position: relative;
+    /* Ensure absolute positioned elements (like h1) stay within the container */
+    height: 100px;
+    /* Define a fixed height for the header */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Optional: add a shadow for better visibility */
+    overflow: hidden;
+    /* Prevent overflow from content */
+}
+
+/* Logo styling */
+.header-container img {
+    width: 100px;
+    height: auto;
+    margin-right: 20px;
+    /* Space between logo and heading */
+}
+
+/* Heading styling */
+.header-container h1 {
+    font-size: 1.8rem;
+    color: #333;
+    text-align: center;
+    margin: 0;
+    line-height: 1.2;
+    /* Adjust line height for better spacing */
+}
+
+/* Adjustments for medium screens (tablets) */
+@media (max-width: 768px) {
+    .header-container {
+        height: auto;
+        /* Allow flexible height for smaller screens */
+        flex-wrap: wrap;
+        /* Stack items if necessary */
+    }
+
+    .header-container img {
+        width: 80px;
+    }
+
+    .header-container h1 {
+        font-size: 1.5rem;
+    }
+}
+
+/* Adjustments for small screens (phones) */
+@media (max-width: 460px) {
+    .header-container h1 {
+        font-size: 1rem;
+        font-weight: 800;
+    }
+
+    .header-container img {
+        width: 60px;
+        margin-bottom: 10px;
+        /* Add spacing below the logo */
+    }
+
+    .header-container {
+        flex-direction: column;
+        /* Stack items vertically */
+        text-align: center;
+    }
+}

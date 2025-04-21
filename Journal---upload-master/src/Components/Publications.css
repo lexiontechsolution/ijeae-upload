@@ -1,0 +1,147 @@
+/* Base Styles */
+.publication-container {
+    margin: 40px auto;
+    padding: 10px;
+    max-width: 90%;
+}
+
+.publication-container h2 {
+    text-align: center;
+    font-size: 1.8rem;
+}
+
+.search-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.search-bar {
+    padding: 8px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 300px;
+    max-width: 100%;
+}
+
+.search-button {
+    margin-left: 10px;
+    padding: 8px 15px;
+    font-size: 1rem;
+    background-color: #396df1;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.search-button:hover {
+    background-color: #94c8ea;
+}
+
+.publication-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    overflow-x: auto;
+}
+
+.publication-table th,
+.publication-table td {
+    padding: 15px;
+    border: 1px solid black;
+    text-align: left;
+}
+
+.publication-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.publication-table tr:hover {
+    background-color: #cac9c9;
+}
+
+.delete-button {
+    padding: 5px 10px;
+    color: white;
+    background-color: #e74c3c;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.delete-button:hover {
+    background-color: #c0392b;
+}
+
+/* Media Queries for Responsiveness */
+
+/* For screens less than 768px */
+@media (max-width: 768px) {
+    .publication-container {
+        margin: 20px;
+        padding: 10px;
+    }
+
+    .publication-container h2 {
+        font-size: 1.5rem;
+    }
+
+    .search-bar {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .search-button {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .publication-table th,
+    .publication-table td {
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+
+        .publication-table td:nth-child(5),
+      
+        .publication-table th:nth-child(5) {
+            display: none;
+        }
+
+    .delete-button {
+        font-size: 0.8rem;
+        padding: 5px;
+    }
+}
+
+/* For screens less than 480px */
+@media (max-width: 480px) {
+    .publication-container h2 {
+        font-size: 1.2rem;
+    }
+
+    .search-bar,
+    .search-button {
+        font-size: 0.9rem;
+    }
+
+    .publication-table{
+        margin: 0;
+    }
+
+    .publication-table th,
+    .publication-table td {
+        font-size: 0.8rem;
+        padding: 8px;
+    }
+
+    .delete-button {
+        font-size: 0.7rem;
+        padding: 4px;
+    }
+}
