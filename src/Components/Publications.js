@@ -44,7 +44,7 @@ const Publications = () => {
   const fetchPdf = async (pdfId) => {
     try {
       const response = await axios.get(
-        `https://publicationbackend-1.onrender.com/view-pdf/${pdfId}`,
+        `http://eeman.in:15002/view-pdf/${pdfId}`,
         { responseType: "blob" } // Request binary data
       );
 
@@ -67,7 +67,7 @@ const Publications = () => {
 
     try {
       const response = await fetch(
-        `https://publication-backend-klr9.onrender.com/publications/${id}`,
+        `http://eeman.in:15002/publications/${id}`,
         { method: "DELETE" }
       );
 
