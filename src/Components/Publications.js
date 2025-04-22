@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+  import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "./Header";
 import "./Publications.css";
@@ -14,7 +14,7 @@ const Publications = () => {
     const fetchPublications = async () => {
       try {
         const response = await fetch(
-          "https://61.2.79.154:15002/publications"
+          "http://eeman.in:15002/publications"
         );
 
         if (!response.ok) throw new Error("Failed to fetch publications.");
