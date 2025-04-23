@@ -77,7 +77,7 @@ const Upload = () => {
       console.log("pdf", pdfFile);
 
       const response = await axios.post(
-        "http://eeman.in:15002/publications",
+        "https://eeman.in:15002/publications",
         data
         // {
         //   headers: {
