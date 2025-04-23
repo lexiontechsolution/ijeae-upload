@@ -14,7 +14,7 @@ const Publications = () => {
     const fetchPublications = async () => {
       try {
         const response = await fetch(
-          "http://eeman.in:15002/publications"
+          "https://eeman.in:15002/publications"
         );
 
         if (!response.ok) throw new Error("Failed to fetch publications.");
