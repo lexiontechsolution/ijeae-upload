@@ -14,7 +14,7 @@ const Publications = () => {
     const fetchPublications = async () => {
       try {
         const response = await fetch(
-          "https://eeman.in:15002/publications"
+          "https://publicationbackend.onrender.com/publications"
         );
 
         if (!response.ok) throw new Error("Failed to fetch publications.");
@@ -44,7 +44,7 @@ const Publications = () => {
   const fetchPdf = async (pdfId) => {
     try {
       const response = await axios.get(
-        `http://eeman.in:15002/view-pdf/${pdfId}`,
+        `https://publicationbackend.onrender.com/view-pdf/${pdfId}`,
         { responseType: "blob" } // Request binary data
       );
 
@@ -67,7 +67,7 @@ const Publications = () => {
 
     try {
       const response = await fetch(
-        `http://eeman.in:15002/publications/${id}`,
+        `https://publicationbackend.onrender.com/publications/${id}`,
         { method: "DELETE" }
       );
 
