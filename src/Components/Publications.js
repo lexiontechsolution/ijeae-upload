@@ -67,7 +67,7 @@ const Publications = () => {
 
     try {
       const response = await fetch(
-        `https://eeman.in:15002/ /publications/${id}`,
+        `https://eeman.in:15002/publications/${id}`,
         { method: "DELETE" }
       );
 
