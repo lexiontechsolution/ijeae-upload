@@ -41,27 +41,14 @@ const Publications = () => {
     return () => clearTimeout(timer);
   }, [searchQuery, publications]);
 
-  const fetchPdf = async (pdfId) => {
-    try {
-      const response = await axios.get(
-        `https://eeman.in:15002/view-pdf/${pdfId}`,
-        { responseType: "blob" } // Request binary data
-      );
-
-      // Convert binary data to a Blob
-      const blob = new Blob([response.data], { type: "application/pdf" });
-
-      // Generate a temporary URL for the blob
-      const blobUrl = URL.createObjectURL(blob);
-
-      // Open the PDF in a new tab
-      window.open(blobUrl, "_blank");
-    } catch (error) {
-      console.error("Error fetching PDF:", error);
-      alert("Failed to load PDF.");
-    }
+    const fetchPdf = (pdfId) => {
+    // Construct the relative URL for the PDF
+    const pdfUrl = `/view-pdf/${pdfId}`;
+  
+    // Open the PDF in a new tab
+    window.open(pdfUrl, "_blank");
   };
-
+  
   const handleDelete = async (id) => {
     if (!id) return;
 
