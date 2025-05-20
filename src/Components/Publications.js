@@ -1,4 +1,4 @@
-  import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "./Header";
 import "./Publications.css";
@@ -13,9 +13,7 @@ const Publications = () => {
   useEffect(() => {
     const fetchPublications = async () => {
       try {
-        const response = await fetch(
-          "https://eeman.in:15002/publications"
-        );
+        const response = await fetch("https://eeman.in:15002/publications");
 
         if (!response.ok) throw new Error("Failed to fetch publications.");
 
@@ -41,14 +39,14 @@ const Publications = () => {
     return () => clearTimeout(timer);
   }, [searchQuery, publications]);
 
-    const fetchPdf = (pdfId) => {
+  const fetchPdf = (pdfId) => {
     // Construct the relative URL for the PDF
     const pdfUrl = `/view-pdf/${pdfId}`;
-  
+
     // Open the PDF in a new tab
     window.open(pdfUrl, "_blank");
   };
-  
+
   const handleDelete = async (id) => {
     if (!id) return;
 
@@ -94,7 +92,7 @@ const Publications = () => {
                 <th>Title</th>
                 <th>Year</th>
                 <th>Volume</th>
-                <th>Content</th>
+                {/* <th>Content</th> */}
                 <th>PDF</th>
                 <th>Actions</th>
               </tr>
@@ -106,7 +104,7 @@ const Publications = () => {
                   <td>{publication.title || "N/A"}</td>
                   <td>{publication.year || "N/A"}</td>
                   <td>{publication.volume || "N/A"}</td>
-                  <td>{publication.content || "N/A"}</td>
+                  {/* <td>{publication.content || "N/A"}</td> */}
                   <td>
                     <button onClick={() => fetchPdf(publication._id)}>
                       View PDF
@@ -122,6 +120,14 @@ const Publications = () => {
                       }
                     >
                       Delete
+                    </button>
+                    <button
+                      className="update-button"
+                      onClick={() =>
+                        navigate(`/update-publication/${publication._id}`)
+                      }
+                    >
+                      Update
                     </button>
                   </td>
                 </tr>
