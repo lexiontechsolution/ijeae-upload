@@ -78,7 +78,6 @@ const Upload = () => {
 
       const response = await axios.post(
         "https://eeman.in:15002/publications",
-       // "http://localhost:5000/publications",
         data
         // {
         //   headers: {
