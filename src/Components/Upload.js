@@ -78,12 +78,13 @@ const Upload = () => {
 
       const response = await axios.post(
         "https://eeman.in:15002/publications",
-        data
-        // {
-        //   headers: {
-        //     "Content-Type": "multipart/form-data",
-        //   },
-        // }
+
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
 
       console.log("Publication submitted:", response.data);
