@@ -68,7 +68,7 @@ const UpdatePublication = () => {
   };
 
   const handleSubmit = async (e) => {
-  // e.preventDefault();
+  e.preventDefault();
 
   if (volumeError) {
     alert("Please fix the volume format.");
@@ -236,7 +236,7 @@ const UpdatePublication = () => {
           </label>
 
           <button type="submit">Update</button>
-          <button type="submit" onClick={() => navigate("/publications")}>
+          <button type="button" onClick={() => navigate("/publications")}>
             Back to Publications
           </button>
         </form>
