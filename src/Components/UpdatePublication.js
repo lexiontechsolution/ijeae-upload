@@ -91,10 +91,7 @@ const UpdatePublication = () => {
     try {
       const res = await axios.put(
         `https://eeman.in:15002/publications/${id}`,
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
+        formData
       );
 
       const updatedData = res.data?.data || res.data;
