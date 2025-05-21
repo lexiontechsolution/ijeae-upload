@@ -126,6 +126,9 @@ const UpdatePublication = () => {
         if (res.data.data.pdfUrl) {
           setExistingPdf(res.data.data.pdfUrl);
         }
+
+        
+        console.log("Updated publication data:", response.data);
       }
 
       // Optionally stay on the page or navigate
