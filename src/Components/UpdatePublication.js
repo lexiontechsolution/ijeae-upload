@@ -19,16 +19,15 @@ const UpdatePublication = () => {
   });
 
   const [pdfFile, setPdfFile] = useState(null);
-  const [existingPdf, setExistingPdf] = useState(null); // For existing file
+  const [existingPdf, setExistingPdf] = useState(null);
   const [volumeError, setVolumeError] = useState("");
 
   useEffect(() => {
     axios
       .get(`https://eeman.in:15002/publications/${id}`)
       .then((res) => {
-        const data = res.data?.data || res.data; // Adjust according to your backend format
-
-        console.log("Fetched update data:", res.data);
+        const data = res.data?.data || res.data;
+        console.log("Fetched update data:", data);
         setPublication({
           year: data.year || "",
           volume: data.volume || "",
@@ -36,14 +35,13 @@ const UpdatePublication = () => {
           title: data.title || "",
           content: data.content || "",
           author: data.author || "",
-          specialIssue: data.specialIssue || "No",
+          specialIssue: data.specialIssue ? "Yes" : "No",
         });
 
         if (data.pdfUrl || data.pdf) {
           setExistingPdf(data.pdfUrl || data.pdf);
         }
       })
-
       .catch((err) => console.error("Error loading data:", err));
   }, [id]);
 
@@ -64,63 +62,55 @@ const UpdatePublication = () => {
 
   const handleFileChange = (e) => {
     setPdfFile(e.target.files[0]);
-    setExistingPdf(null); // If uploading new, remove old display
+    setExistingPdf(null);
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (volumeError) {
-    alert("Please fix the volume format.");
-    return;
-  }
-
-  const formData = new FormData();
-
-  for (const key in publication) {
-    formData.append(key, publication[key]);
-  }
-
-  if (pdfFile) {
-    formData.append("pdf", pdfFile);
-  }
-
-  try {
-    const res = await axios.put(
-      `https://eeman.in:15002/publications/${id}`,
-      formData,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
-    );
-
-    console.log("Updated publication data:", res.data);
-    alert("Publication updated successfully");
-
-    if (res.data && res.data.data) {
-      setPublication({
-        year: res.data.data.year || "",
-        volume: res.data.data.volume || "",
-        issue: res.data.data.issue || "",
-        title: res.data.data.title || "",
-        content: res.data.data.content || "",
-        author: res.data.data.author || "",
-        specialIssue: res.data.data.specialIssue || "No",
-      });
-
-      if (res.data.data.pdfUrl) {
-        setExistingPdf(res.data.data.pdfUrl);
-      }
+    if (volumeError) {
+      alert("Please fix the volume format.");
+      return;
     }
 
-    // Navigate back to publications list after update
-    navigate("/publications");
+    const formData = new FormData();
+    formData.append("year", Number(publication.year));
+    formData.append("volume", publication.volume);
+    formData.append("issue", Number(publication.issue));
+    formData.append("title", publication.title);
+    formData.append("content", publication.content);
+    formData.append("author", publication.author);
 
-  } catch (error) {
-    console.error("Update failed:", error);
-    alert("Update failed.");
-  }
-};
+    const isSpecialIssue = publication.specialIssue === "Yes";
+    formData.append("specialIssue", isSpecialIssue);
+
+    if (pdfFile) {
+      formData.append("pdf", pdfFile);
+    }
+
+    try {
+      const res = await axios.put(
+        `https://eeman.in:15002/publications/${id}`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      const updatedData = res.data?.data || res.data;
+      console.log("✅ Updated publication:", updatedData);
+
+      alert("Publication updated successfully!");
+
+      
+      setTimeout(() => {
+        navigate("/publications");
+      }, 3000);
+    } catch (error) {
+      console.error("Update failed:", error);
+      alert("Update failed.");
+    }
+  };
 
   return (
     <>
