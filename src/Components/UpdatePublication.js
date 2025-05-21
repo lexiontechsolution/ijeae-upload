@@ -108,6 +108,7 @@ const UpdatePublication = () => {
         }
       );
 
+      console.log("Updated publication data:", response.data);
       alert("Publication updated successfully");
 
       // Update state with latest data returned from backend
@@ -128,7 +129,7 @@ const UpdatePublication = () => {
         }
 
         
-        console.log("Updated publication data:", response.data);
+     
       }
 
       // Optionally stay on the page or navigate
