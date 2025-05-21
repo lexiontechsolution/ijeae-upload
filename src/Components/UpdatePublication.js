@@ -68,77 +68,59 @@ const UpdatePublication = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  // e.preventDefault();
 
-    if (volumeError) {
-      alert("Please fix the volume format.");
-      return;
-    }
+  if (volumeError) {
+    alert("Please fix the volume format.");
+    return;
+  }
 
-    const formData = new FormData();
+  const formData = new FormData();
 
-    for (const key in publication) {
-      formData.append(key, publication[key]);
-    }
+  for (const key in publication) {
+    formData.append(key, publication[key]);
+  }
 
-    if (pdfFile) {
-      formData.append("pdf", pdfFile);
-    }
+  if (pdfFile) {
+    formData.append("pdf", pdfFile);
+  }
 
-    // try {
-    //   await axios.put(`https://eeman.in:15002/publications/${id}`, formData, {
-    //     headers: {
-    //       "Content-Type": "multipart/form-data",
-    //     },
-    //   });
-
-    //   alert("Publication updated successfully");
-    //   navigate("/publications");
-    // } catch (error) {
-    //   console.error("Update failed:", error);
-    //   alert("Update failed.");
-    // }
-
-    try {
-      const res = await axios.put(
-        `https://eeman.in:15002/publications/${id}`,
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
-
-      console.log("Updated publication data:", response.data);
-      alert("Publication updated successfully");
-
-      // Update state with latest data returned from backend
-      if (res.data && res.data.data) {
-        setPublication({
-          year: res.data.data.year || "",
-          volume: res.data.data.volume || "",
-          issue: res.data.data.issue || "",
-          title: res.data.data.title || "",
-          content: res.data.data.content || "",
-          author: res.data.data.author || "",
-          specialIssue: res.data.data.specialIssue || "No",
-        });
-
-        // Also update existing PDF if changed
-        if (res.data.data.pdfUrl) {
-          setExistingPdf(res.data.data.pdfUrl);
-        }
-
-        
-     
+  try {
+    const res = await axios.put(
+      `https://eeman.in:15002/publications/${id}`,
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
       }
+    );
 
-      // Optionally stay on the page or navigate
-      // navigate("/publications");
-    } catch (error) {
-      console.error("Update failed:", error);
-      alert("Update failed.");
+    console.log("Updated publication data:", res.data);
+    alert("Publication updated successfully");
+
+    if (res.data && res.data.data) {
+      setPublication({
+        year: res.data.data.year || "",
+        volume: res.data.data.volume || "",
+        issue: res.data.data.issue || "",
+        title: res.data.data.title || "",
+        content: res.data.data.content || "",
+        author: res.data.data.author || "",
+        specialIssue: res.data.data.specialIssue || "No",
+      });
+
+      if (res.data.data.pdfUrl) {
+        setExistingPdf(res.data.data.pdfUrl);
+      }
     }
-  };
+
+    // Navigate back to publications list after update
+    navigate("/publications");
+
+  } catch (error) {
+    console.error("Update failed:", error);
+    alert("Update failed.");
+  }
+};
 
   return (
     <>
