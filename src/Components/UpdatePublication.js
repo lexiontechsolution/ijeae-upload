@@ -18,18 +18,32 @@ const UpdatePublication = () => {
     specialIssue: "No",
   });
 
+  const [pdfFile, setPdfFile] = useState(null);
+  const [existingPdf, setExistingPdf] = useState(null); // For existing file
   const [volumeError, setVolumeError] = useState("");
 
   useEffect(() => {
     axios
       .get(`https://eeman.in:15002/publications/${id}`)
       .then((res) => {
+        const data = res.data?.data || res.data; // Adjust according to your backend format
+
+        console.log("Fetched update data:", res.data);
         setPublication({
-          ...res.data,
-          specialIssue: res.data.specialIssue || "No",
-          issue: res.data.issue || "",
+          year: data.year || "",
+          volume: data.volume || "",
+          issue: data.issue || "",
+          title: data.title || "",
+          content: data.content || "",
+          author: data.author || "",
+          specialIssue: data.specialIssue || "No",
         });
+
+        if (data.pdfUrl || data.pdf) {
+          setExistingPdf(data.pdfUrl || data.pdf);
+        }
       })
+
       .catch((err) => console.error("Error loading data:", err));
   }, [id]);
 
@@ -48,18 +62,36 @@ const UpdatePublication = () => {
     setPublication({ ...publication, [name]: value });
   };
 
+  const handleFileChange = (e) => {
+    setPdfFile(e.target.files[0]);
+    setExistingPdf(null); // If uploading new, remove old display
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (volumeError) {
-      alert("Please fix the errors before submitting.");
+      alert("Please fix the volume format.");
       return;
     }
 
-    const payload = { ...publication };
+    const formData = new FormData();
+
+    for (const key in publication) {
+      formData.append(key, publication[key]);
+    }
+
+    if (pdfFile) {
+      formData.append("pdf", pdfFile);
+    }
 
     try {
-      await axios.put(`https://eeman.in:15002/publications/${id}`, payload);
+      await axios.put(`https://eeman.in:15002/publications/${id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
       alert("Publication updated successfully");
       navigate("/publications");
     } catch (error) {
@@ -154,6 +186,31 @@ const UpdatePublication = () => {
               onChange={handleChange}
               required
             />
+          </label>
+
+          <label>
+            PDF File:
+            {existingPdf && (
+              <div className="pdf-preview">
+                <a href={existingPdf} target="_blank" rel="noopener noreferrer">
+                  View Existing PDF
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setExistingPdf(null)}
+                  className="remove-pdf-button"
+                >
+                  Remove PDF
+                </button>
+              </div>
+            )}
+            {!existingPdf && (
+              <input
+                type="file"
+                accept="application/pdf"
+                onChange={handleFileChange}
+              />
+            )}
           </label>
 
           <button type="submit">Update</button>
