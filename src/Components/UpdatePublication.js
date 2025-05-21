@@ -85,15 +85,51 @@ const UpdatePublication = () => {
       formData.append("pdf", pdfFile);
     }
 
+    // try {
+    //   await axios.put(`https://eeman.in:15002/publications/${id}`, formData, {
+    //     headers: {
+    //       "Content-Type": "multipart/form-data",
+    //     },
+    //   });
+
+    //   alert("Publication updated successfully");
+    //   navigate("/publications");
+    // } catch (error) {
+    //   console.error("Update failed:", error);
+    //   alert("Update failed.");
+    // }
+
     try {
-      await axios.put(`https://eeman.in:15002/publications/${id}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const res = await axios.put(
+        `https://eeman.in:15002/publications/${id}`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
 
       alert("Publication updated successfully");
-      navigate("/publications");
+
+      // Update state with latest data returned from backend
+      if (res.data && res.data.data) {
+        setPublication({
+          year: res.data.data.year || "",
+          volume: res.data.data.volume || "",
+          issue: res.data.data.issue || "",
+          title: res.data.data.title || "",
+          content: res.data.data.content || "",
+          author: res.data.data.author || "",
+          specialIssue: res.data.data.specialIssue || "No",
+        });
+
+        // Also update existing PDF if changed
+        if (res.data.data.pdfUrl) {
+          setExistingPdf(res.data.data.pdfUrl);
+        }
+      }
+
+      // Optionally stay on the page or navigate
+      // navigate("/publications");
     } catch (error) {
       console.error("Update failed:", error);
       alert("Update failed.");
@@ -214,6 +250,9 @@ const UpdatePublication = () => {
           </label>
 
           <button type="submit">Update</button>
+          <button type="submit" onClick={() => navigate("/publications")}>
+            Back to Publications
+          </button>
         </form>
       </div>
     </>
