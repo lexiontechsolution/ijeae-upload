@@ -16,6 +16,7 @@ const UpdatePublication = () => {
     content: "",
     author: "",
     specialIssue: "No",
+    doi: "",
   });
 
   const [pdfFile, setPdfFile] = useState(null);
@@ -36,6 +37,7 @@ const UpdatePublication = () => {
           content: data.content || "",
           author: data.author || "",
           specialIssue: data.specialIssue ? "Yes" : "No",
+          doi: data.doi || "",
         });
 
         if (data.pdfUrl || data.pdf) {
@@ -65,69 +67,66 @@ const UpdatePublication = () => {
     setExistingPdf(null);
   };
 
-
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (volumeError) {
-    alert("Please fix the volume format.");
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append("year", Number(publication.year));
-  formData.append("volume", publication.volume);
-  formData.append("issue", Number(publication.issue));
-  formData.append("title", publication.title);
-  formData.append("content", publication.content);
-  formData.append("author", publication.author);
-
-  const isSpecialIssue = publication.specialIssue === "Yes";
-  formData.append("specialIssue", isSpecialIssue);
-
-  if (pdfFile) {
-    formData.append("pdf", pdfFile);
-  }
-
-  try {
-    const res = await axios.put(
-      `https://eeman.in:15002/publications/${id}`,
-      formData
-    );
-
-    const updatedData = res.data?.data || res.data;
-
-    //Update the form with the new data
-    setPublication({
-      year: updatedData.year,
-      volume: updatedData.volume,
-      issue: updatedData.issue,
-      title: updatedData.title,
-      content: updatedData.content,
-      author: updatedData.author,
-      specialIssue: updatedData.specialIssue ? "Yes" : "No",
-    });
-
-    if (updatedData.pdfUrl || updatedData.pdf) {
-      setExistingPdf(updatedData.pdfUrl || updatedData.pdf);
+    if (volumeError) {
+      alert("Please fix the volume format.");
+      return;
     }
 
-    const refetched = await axios.get(`https://eeman.in:15002/publications/${id}`);
-    setPublication(refetched.data?.data || refetched.data);
+    const formData = new FormData();
+    formData.append("year", Number(publication.year));
+    formData.append("volume", publication.volume);
+    formData.append("issue", Number(publication.issue));
+    formData.append("title", publication.title);
+    formData.append("content", publication.content);
+    formData.append("author", publication.author);
+    formData.append("specialIssue", publication.specialIssue === "Yes");
+    formData.append("doi", publication.doi);
 
-    console.log("Updated publication:", updatedData);
-    alert("Publication updated successfully!");
+    if (pdfFile) {
+      formData.append("pdf", pdfFile);
+    }
 
-    setTimeout(() => {
-      navigate("/publications");
-    }, 3000);
-  } catch (error) {
-    console.error("Update failed:", error);
-    alert("Update failed.");
-  }
-};
+    try {
+      const res = await axios.put(
+        `https://eeman.in:15002/publications/${id}`,
+        formData
+      );
 
-  
+      const updatedData = res.data?.data || res.data;
+
+      setPublication({
+        year: updatedData.year,
+        volume: updatedData.volume,
+        issue: updatedData.issue,
+        title: updatedData.title,
+        content: updatedData.content,
+        author: updatedData.author,
+        specialIssue: updatedData.specialIssue ? "Yes" : "No",
+        doi: updatedData.doi || "",
+      });
+
+      if (updatedData.pdfUrl || updatedData.pdf) {
+        setExistingPdf(updatedData.pdfUrl || updatedData.pdf);
+      }
+
+      const refetched = await axios.get(`https://eeman.in:15002/publications/${id}`);
+      setPublication(refetched.data?.data || refetched.data);
+
+      console.log("Updated publication:", updatedData);
+      alert("Publication updated successfully!");
+
+      setTimeout(() => {
+        navigate("/publications");
+      }, 3000);
+    } catch (error) {
+      console.error("Update failed:", error);
+      alert("Update failed.");
+    }
+  };
+
   return (
     <>
       <Header />
@@ -213,6 +212,17 @@ const UpdatePublication = () => {
               value={publication.author}
               onChange={handleChange}
               required
+            />
+          </label>
+
+          <label>
+            DOI Link:
+            <input
+              type="text"
+              name="doi"
+              placeholder="https://doi.org/xxxx"
+              value={publication.doi}
+              onChange={handleChange}
             />
           </label>
 
