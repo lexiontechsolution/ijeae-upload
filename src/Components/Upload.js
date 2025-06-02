@@ -70,6 +70,11 @@ const Upload = () => {
     data.append("doi", formData.doi); // Append DOI
     data.append("pdf", pdfFile);
 
+    // ✅ Console log all key-value pairs in FormData
+  console.log("FormData being submitted:");
+  for (let [key, value] of data.entries()) {
+    console.log(`${key}:`, value);
+  }
     try {
       const response = await axios.post(
         "https://eeman.in:15002/publications",
