@@ -13,9 +13,10 @@ const Upload = () => {
     title: "",
     content: "",
     author: "",
-    specialIssue: "No",
+    isSpecialIssue: "No",
+    doi: "", 
     pdf: "",
-    doi: "", // Added DOI field
+
   });
 
   const [pdfFile, setPdfFile] = useState(null);
@@ -63,14 +64,14 @@ const Upload = () => {
     data.append("year", formData.year);
     data.append("volume", formData.volume);
     data.append("issue", formData.issue);
-    data.append("specialissue", formData.specialIssue);
+    data.append("isSpecialIssue", formData.specialIssue === "Yes");
     data.append("title", formData.title);
     data.append("content", formData.content);
     data.append("author", formData.author);
     data.append("doi", formData.doi); // Append DOI
     data.append("pdf", pdfFile);
 
-    // ✅ Console log all key-value pairs in FormData
+    // Console log all key-value pairs in FormData
   console.log("FormData being submitted:");
   for (let [key, value] of data.entries()) {
     console.log(`${key}:`, value);
@@ -139,7 +140,7 @@ const Upload = () => {
               <label>
                 Special Issue:
                 <select
-                  name="specialIssue"
+                  name="isSpecialIssue"
                   value={formData.specialIssue}
                   onChange={handleChange}
                   required
