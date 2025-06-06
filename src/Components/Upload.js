@@ -64,7 +64,7 @@ const Upload = () => {
     data.append("year", formData.year);
     data.append("volume", formData.volume);
     data.append("issue", formData.issue);
-    data.append("isSpecialIssue", formData.specialIssue === "Yes");
+    data.append("isSpecialIssue", formData.isSpecialIssue === "Yes");
     data.append("title", formData.title);
     data.append("content", formData.content);
     data.append("author", formData.author);
