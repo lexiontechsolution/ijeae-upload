@@ -141,7 +141,7 @@ const Upload = () => {
                 Special Issue:
                 <select
                   name="isSpecialIssue"
-                  value={formData.specialIssue}
+                  value={formData.isSpecialIssue}
                   onChange={handleChange}
                   required
                 >
