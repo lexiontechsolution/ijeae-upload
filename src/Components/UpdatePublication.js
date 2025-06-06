@@ -227,29 +227,30 @@ const UpdatePublication = () => {
           </label>
 
           <label>
-            PDF File:
-            {existingPdf && (
-              <div className="pdf-preview">
-                <a href={existingPdf} target="_blank" rel="noopener noreferrer">
-                  View Existing PDF
-                </a>
-                <button
-                  type="button"
-                  onClick={() => setExistingPdf(null)}
-                  className="remove-pdf-button"
-                >
-                  Remove PDF
-                </button>
-              </div>
-            )}
-            {!existingPdf && (
-              <input
-                type="file"
-                accept="application/pdf"
-                onChange={handleFileChange}
-              />
-            )}
-          </label>
+  PDF File:
+  {existingPdf && (
+    <div className="pdf-preview">
+      <a href={`/view-pdf/${id}`} target="_blank" rel="noopener noreferrer">
+        View Existing PDF
+      </a>
+      <button
+        type="button"
+        onClick={() => setExistingPdf(null)}
+        className="remove-pdf-button"
+      >
+        Remove PDF
+      </button>
+    </div>
+  )}
+  {!existingPdf && (
+    <input
+      type="file"
+      accept="application/pdf"
+      onChange={handleFileChange}
+    />
+  )}
+</label>
+
 
           <button type="submit">Update</button>
           <button type="button" onClick={() => navigate("/publications")}>
