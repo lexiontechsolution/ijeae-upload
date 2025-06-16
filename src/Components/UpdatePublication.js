@@ -89,11 +89,12 @@ const UpdatePublication = () => {
       formData.append("pdf", pdfFile);
     }
 
-    try {
-      const res = await axios.put(
+    try{
+      const res = await axios.post(
   `https://eeman.in:15002/publications/update/${id}`,
   formData
 );
+
 
       const updatedData = res.data?.data || res.data;
 
