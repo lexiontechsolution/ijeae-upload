@@ -91,9 +91,9 @@ const UpdatePublication = () => {
 
     try{
       const res = await axios.post(
-  `https://eeman.in:15002/publications/update/${id}`,
-  formData
-);
+          `https://eeman.in:15002/publications/${id}/update`,
+        formData
+      );
 
 
       const updatedData = res.data?.data || res.data;
