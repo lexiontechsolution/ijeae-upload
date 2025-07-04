@@ -78,7 +78,7 @@ const Upload = () => {
   }
     try {
       const response = await axios.post(
-        "https://eeman.in:15002/publications",
+        "https://dev.dine360.ca/backend/publications/",
         data,
         {
           headers: {
