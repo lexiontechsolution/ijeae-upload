@@ -25,7 +25,7 @@ const UpdatePublication = () => {
 
   useEffect(() => {
     axios
-      .get(`https://eeman.in:15002/publications/${id}`)
+      .get(`https://dev.dine360.ca/backend/publications/${id}`)
       .then((res) => {
         const data = res.data?.data || res.data;
         console.log("Fetched update data:", data);
