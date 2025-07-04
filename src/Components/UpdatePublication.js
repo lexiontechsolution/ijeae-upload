@@ -91,7 +91,7 @@ const UpdatePublication = () => {
 
     try{
       const res = await axios.post(
-          `https://eeman.in:15002/publications/${id}/update`,
+          `https://dev.dine360.ca/backend/publications//${id}/update`,
         formData
       );
 
@@ -113,7 +113,7 @@ const UpdatePublication = () => {
         setExistingPdf(updatedData.pdfUrl || updatedData.pdf);
       }
 
-      const refetched = await axios.get(`https://eeman.in:15002/publications/${id}`);
+      const refetched = await axios.get(`https://dev.dine360.ca/backend/publications/${id}`);
       setPublication(refetched.data?.data || refetched.data);
 
       console.log("Updated publication:", updatedData);
