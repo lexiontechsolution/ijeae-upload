@@ -1,33 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Header from "./Header";
-import Footer from "./Footer";
 import "./Publications.css";
 
 const Publications = () => {
   const [publications, setPublications] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredPublications, setFilteredPublications] = useState([]);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = useLocation(); // To detect route changes
 
   useEffect(() => {
     const fetchPublications = async () => {
       try {
-        const response = await fetch("https://dev.dine360.ca/backend/publications");
+        const response = await fetch("https://dev.dine360.ca/backend/publications/");
         if (!response.ok) throw new Error("Failed to fetch publications.");
 
         const data = await response.json();
         setPublications(data);
         setFilteredPublications(data);
+        console.log("Fetched Publications:", data);
       } catch (error) {
-        console.error("Error fetching publications:", error);
-      } finally {
-        setLoading(false);
+        console.error("Error fetching data:", error);
       }
     };
 
+    // Fetch publications when component mounts or location changes to /publications
     if (location.pathname === "/publications") {
       fetchPublications();
     }
@@ -44,7 +42,7 @@ const Publications = () => {
   }, [searchQuery, publications]);
 
   const fetchPdf = (pdfId) => {
-    const pdfUrl = `/view-pdf/${pdfId}`;
+    const pdfUrl = /view-pdf/${pdfId};
     window.open(pdfUrl, "_blank");
   };
 
@@ -52,11 +50,8 @@ const Publications = () => {
     if (!id) return;
 
     try {
-      const confirmed = window.confirm("Are you sure you want to delete this?");
-      if (!confirmed) return;
-
       const response = await fetch(
-        `https://dev.dine360.ca/backend/publications/${id}`,
+        https://eeman.in:15002/publications/${id},
         { method: "DELETE" }
       );
 
@@ -88,9 +83,7 @@ const Publications = () => {
           />
         </div>
 
-        {loading ? (
-          <p>Loading publications...</p>
-        ) : filteredPublications.length > 0 ? (
+        {filteredPublications.length > 0 ? (
           <table className="publication-table">
             <thead>
               <tr>
@@ -117,14 +110,18 @@ const Publications = () => {
                   <td>
                     <button
                       className="delete-button"
-                      onClick={() => handleDelete(publication._id)}
+                      onClick={() =>
+                        window.confirm(
+                          "Are you sure you want to delete this?"
+                        ) && handleDelete(publication._id)
+                      }
                     >
                       Delete
                     </button>
                     <button
                       className="update-button"
                       onClick={() =>
-                        navigate(`/update-publication/${publication._id}`)
+                        navigate(/update-publication/${publication._id})
                       }
                     >
                       Update
@@ -135,10 +132,9 @@ const Publications = () => {
             </tbody>
           </table>
         ) : (
-          <p>No publications found.</p>
+          <p>No publications found or still loading...</p>
         )}
       </div>
-      <Footer />
     </>
   );
 };
