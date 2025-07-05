@@ -1,31 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Header from "./Header";
+import Footer from "./Footer";
 import "./Publications.css";
 
 const Publications = () => {
   const [publications, setPublications] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredPublications, setFilteredPublications] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const location = useLocation(); // To detect route changes
+  const location = useLocation();
 
   useEffect(() => {
     const fetchPublications = async () => {
       try {
-        const response = await fetch("https://dev.dine360.ca/backend/publications/");
+        const response = await fetch("https://dev.dine360.ca/backend/publications");
         if (!response.ok) throw new Error("Failed to fetch publications.");
 
         const data = await response.json();
         setPublications(data);
         setFilteredPublications(data);
-        console.log("Fetched Publications:", data);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching publications:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    // Fetch publications when component mounts or location changes to /publications
     if (location.pathname === "/publications") {
       fetchPublications();
     }
@@ -50,8 +52,11 @@ const Publications = () => {
     if (!id) return;
 
     try {
+      const confirmed = window.confirm("Are you sure you want to delete this?");
+      if (!confirmed) return;
+
       const response = await fetch(
-        `https://eeman.in:15002/publications/${id}`,
+        `https://dev.dine360.ca/backend/publications/${id}`,
         { method: "DELETE" }
       );
 
@@ -83,7 +88,9 @@ const Publications = () => {
           />
         </div>
 
-        {filteredPublications.length > 0 ? (
+        {loading ? (
+          <p>Loading publications...</p>
+        ) : filteredPublications.length > 0 ? (
           <table className="publication-table">
             <thead>
               <tr>
@@ -110,11 +117,7 @@ const Publications = () => {
                   <td>
                     <button
                       className="delete-button"
-                      onClick={() =>
-                        window.confirm(
-                          "Are you sure you want to delete this?"
-                        ) && handleDelete(publication._id)
-                      }
+                      onClick={() => handleDelete(publication._id)}
                     >
                       Delete
                     </button>
@@ -132,9 +135,10 @@ const Publications = () => {
             </tbody>
           </table>
         ) : (
-          <p>No publications found or still loading...</p>
+          <p>No publications found.</p>
         )}
       </div>
+      <Footer />
     </>
   );
 };
