@@ -1,19 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+  import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "./Header";
 import "./Publications.css";
+import axios from "axios";
 
 const Publications = () => {
   const [publications, setPublications] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredPublications, setFilteredPublications] = useState([]);
-  const navigate = useNavigate();
-  const location = useLocation(); // To detect route changes
+  const navigate = useNavigate(); // For navigation
 
   useEffect(() => {
     const fetchPublications = async () => {
       try {
-        const response = await fetch("https://dev.dine360.ca/backend/publications");
+        const response = await fetch(
+          "https://eeman.in:15002/publications"
+        );
+
         if (!response.ok) throw new Error("Failed to fetch publications.");
 
         const data = await response.json();
@@ -25,11 +28,8 @@ const Publications = () => {
       }
     };
 
-    // Fetch publications when component mounts or location changes to /publications
-    if (location.pathname === "/publications") {
-      fetchPublications();
-    }
-  }, [location]);
+    fetchPublications();
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -41,17 +41,20 @@ const Publications = () => {
     return () => clearTimeout(timer);
   }, [searchQuery, publications]);
 
-  const fetchPdf = (pdfId) => {
-    const pdfUrl = /view-pdf/${pdfId};
+    const fetchPdf = (pdfId) => {
+    // Construct the relative URL for the PDF
+    const pdfUrl = `/view-pdf/${pdfId}`;
+  
+    // Open the PDF in a new tab
     window.open(pdfUrl, "_blank");
   };
-
+  
   const handleDelete = async (id) => {
     if (!id) return;
 
     try {
       const response = await fetch(
-        https://eeman.in:15002/publications/${id},
+        `https://eeman.in:15002/publications/${id}`,
         { method: "DELETE" }
       );
 
@@ -91,6 +94,7 @@ const Publications = () => {
                 <th>Title</th>
                 <th>Year</th>
                 <th>Volume</th>
+                <th>Content</th>
                 <th>PDF</th>
                 <th>Actions</th>
               </tr>
@@ -102,6 +106,7 @@ const Publications = () => {
                   <td>{publication.title || "N/A"}</td>
                   <td>{publication.year || "N/A"}</td>
                   <td>{publication.volume || "N/A"}</td>
+                  <td>{publication.content || "N/A"}</td>
                   <td>
                     <button onClick={() => fetchPdf(publication._id)}>
                       View PDF
@@ -117,14 +122,6 @@ const Publications = () => {
                       }
                     >
                       Delete
-                    </button>
-                    <button
-                      className="update-button"
-                      onClick={() =>
-                        navigate(/update-publication/${publication._id})
-                      }
-                    >
-                      Update
                     </button>
                   </td>
                 </tr>
