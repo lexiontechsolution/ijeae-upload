@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 const PDFViewer = () => {
   const { id } = useParams(); // Get ID from URL
 
-  const pdfURL = `https://dev.dine360.ca/backend/publications/${id}`; // Use direct permanent URL
+  const pdfURL = `https://eeman.in:15002/view-pdf/${id}`; // Use direct permanent URL
 
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
