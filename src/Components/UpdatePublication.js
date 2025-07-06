@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Header from "./Header";
-import "./Upload.css";
-import sideimage from "../Assets/sideimage.svg";
-import { useNavigate } from "react-router-dom";
+import "./UpdatePublication.css";
 
-const Upload = () => {
-  const [formData, setFormData] = useState({
+const UpdatePublication = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const [publication, setPublication] = useState({
     year: "",
     volume: "",
     issue: "",
@@ -14,18 +16,42 @@ const Upload = () => {
     content: "",
     author: "",
     specialIssue: "No",
-    pdf: "",
   });
 
   const [pdfFile, setPdfFile] = useState(null);
+  const [existingPdf, setExistingPdf] = useState(null); // For existing file
   const [volumeError, setVolumeError] = useState("");
-  const navigate = useNavigate();
+
+  useEffect(() => {
+    axios
+      .get(`https://eeman.in:15002/publications/${id}`)
+      .then((res) => {
+        const data = res.data?.data || res.data; // Adjust according to your backend format
+
+        console.log("Fetched update data:", res.data);
+        setPublication({
+          year: data.year || "",
+          volume: data.volume || "",
+          issue: data.issue || "",
+          title: data.title || "",
+          content: data.content || "",
+          author: data.author || "",
+          specialIssue: data.specialIssue || "No",
+        });
+
+        if (data.pdfUrl || data.pdf) {
+          setExistingPdf(data.pdfUrl || data.pdf);
+        }
+      })
+
+      .catch((err) => console.error("Error loading data:", err));
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
     if (name === "volume") {
-      const volumeRegex = /^\d+\(\d+\)$/; // Volume format like 1(1)
+      const volumeRegex = /^\d+\(\d+\)$/;
       if (!volumeRegex.test(value)) {
         setVolumeError("Please follow the format: X(Y) e.g., 1(1)");
       } else {
@@ -33,193 +59,204 @@ const Upload = () => {
       }
     }
 
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setPublication({ ...publication, [name]: value });
   };
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
-
-    if (file) {
-      console.log("File Selected:", file); // Debugging
-    }
-
-    if (file && file.type === "application/pdf") {
-      setPdfFile(file);
-    } else {
-      alert("Please upload a valid PDF file.");
-      setPdfFile(null);
-    }
+    setPdfFile(e.target.files[0]);
+    setExistingPdf(null); // If uploading new, remove old display
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (volumeError) {
-      alert("Please fix the errors before submitting.");
+      alert("Please fix the volume format.");
       return;
     }
 
-    const data = new FormData();
-    data.append("year", formData.year);
-    data.append("volume", formData.volume);
-    data.append("issue", formData.issue);
-    data.append("specialissue", formData.specialIssue);
-    data.append("title", formData.title);
-    data.append("content", formData.content);
-    data.append("author", formData.author);
-    data.append("pdf", pdfFile);
+    const formData = new FormData();
+
+    for (const key in publication) {
+      formData.append(key, publication[key]);
+    }
+
+    if (pdfFile) {
+      formData.append("pdf", pdfFile);
+    }
+
+    // try {
+    //   await axios.put(`https://eeman.in:15002/publications/${id}`, formData, {
+    //     headers: {
+    //       "Content-Type": "multipart/form-data",
+    //     },
+    //   });
+
+    //   alert("Publication updated successfully");
+    //   navigate("/publications");
+    // } catch (error) {
+    //   console.error("Update failed:", error);
+    //   alert("Update failed.");
+    // }
 
     try {
-      console.log("Form Data:", formData);
-      console.log("pdf", pdfFile);
-
-      const response = await axios.post(
-        "https://eeman.in:15002/publications",
-        data
-        // {
-        //   headers: {
-        //     "Content-Type": "multipart/form-data",
-        //   },
-        // }
+      const res = await axios.put(
+        `https://eeman.in:15002/publications/${id}`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
       );
 
-      console.log("Publication submitted:", response.data);
-      alert("Publication submitted successfully!");
-    } catch (error) {
-      console.error("Error response:", error.response?.data || error.message);
-      console.error("Error submitting publication:", error);
-      alert("Failed to submit publication.");
-    }
-  };
+      alert("Publication updated successfully");
 
-  const handleView = () => {
-    navigate("/publications");
+      // Update state with latest data returned from backend
+      if (res.data && res.data.data) {
+        setPublication({
+          year: res.data.data.year || "",
+          volume: res.data.data.volume || "",
+          issue: res.data.data.issue || "",
+          title: res.data.data.title || "",
+          content: res.data.data.content || "",
+          author: res.data.data.author || "",
+          specialIssue: res.data.data.specialIssue || "No",
+        });
+
+        // Also update existing PDF if changed
+        if (res.data.data.pdfUrl) {
+          setExistingPdf(res.data.data.pdfUrl);
+        }
+      }
+
+      // Optionally stay on the page or navigate
+      // navigate("/publications");
+    } catch (error) {
+      console.error("Update failed:", error);
+      alert("Update failed.");
+    }
   };
 
   return (
     <>
       <Header />
-      <div className="view-container">
-        <button onClick={handleView}>View Publications</button>
-      </div>
-      <div className="upload-page-container">
-        <div className="form-container">
-          <form onSubmit={handleSubmit}>
-            <div className="form-row">
-              <label>
-                Year:
-                <input
-                  type="number"
-                  name="year"
-                  placeholder="20xx"
-                  value={formData.year}
-                  onChange={handleChange}
-                  required
-                />
-              </label>
-              <label>
-                Volume(Issue):
-                <input
-                  type="text"
-                  name="volume"
-                  placeholder="1(1)"
-                  value={formData.volume}
-                  onChange={handleChange}
-                  required
-                />
-              </label>
-              {volumeError && <p className="error">{volumeError}</p>}
-            </div>
+      <div className="update-container">
+        <h2>Update Publication</h2>
+        <form onSubmit={handleSubmit}>
+          <label>
+            Year:
+            <input
+              type="number"
+              name="year"
+              placeholder="20xx"
+              value={publication.year}
+              onChange={handleChange}
+              required
+            />
+          </label>
 
-            <div className="form-row">
-              <label>
-                Special Issue:
-                <select
-                  name="specialIssue"
-                  value={formData.specialIssue}
-                  onChange={handleChange}
-                  required
+          <label>
+            Volume(Issue):
+            <input
+              type="text"
+              name="volume"
+              placeholder="1(1)"
+              value={publication.volume}
+              onChange={handleChange}
+              required
+            />
+          </label>
+          {volumeError && <p className="update-error">{volumeError}</p>}
+
+          <label>
+            Issue:
+            <input
+              type="number"
+              name="issue"
+              value={publication.issue}
+              onChange={handleChange}
+              required
+            />
+          </label>
+
+          <label>
+            Special Issue:
+            <select
+              name="specialIssue"
+              value={publication.specialIssue}
+              onChange={handleChange}
+              required
+            >
+              <option value="No">No</option>
+              <option value="Yes">Yes</option>
+            </select>
+          </label>
+
+          <label>
+            Title:
+            <input
+              type="text"
+              name="title"
+              placeholder="Title of the Journal"
+              value={publication.title}
+              onChange={handleChange}
+              required
+            />
+          </label>
+
+          <label>
+            Content:
+            <textarea
+              name="content"
+              value={publication.content}
+              onChange={handleChange}
+              required
+            />
+          </label>
+
+          <label>
+            Author:
+            <input
+              type="text"
+              name="author"
+              value={publication.author}
+              onChange={handleChange}
+              required
+            />
+          </label>
+
+          <label>
+            PDF File:
+            {existingPdf && (
+              <div className="pdf-preview">
+                <a href={existingPdf} target="_blank" rel="noopener noreferrer">
+                  View Existing PDF
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setExistingPdf(null)}
+                  className="remove-pdf-button"
                 >
-                  <option value="No">No</option>
-                  <option value="Yes">Yes</option>
-                </select>
-              </label>
-            </div>
+                  Remove PDF
+                </button>
+              </div>
+            )}
+            {!existingPdf && (
+              <input
+                type="file"
+                accept="application/pdf"
+                onChange={handleFileChange}
+              />
+            )}
+          </label>
 
-            <div className="form-row">
-              <label>
-                Issue:
-                <input
-                  type="number"
-                  name="issue"
-                  value={formData.issue}
-                  onChange={handleChange}
-                  required
-                />
-              </label>
-              <label>
-                Title:
-                <input
-                  type="text"
-                  name="title"
-                  placeholder="Title of the Journal"
-                  value={formData.title}
-                  onChange={handleChange}
-                  required
-                />
-              </label>
-            </div>
-
-            <div className="form-row">
-              <label>
-                Content:
-                <textarea
-                  name="content"
-                  value={formData.content}
-                  onChange={handleChange}
-                  required
-                />
-              </label>
-            </div>
-
-            <div className="form-row">
-              <label>
-                Author:
-                <input
-                  type="text"
-                  name="author"
-                  value={formData.author}
-                  onChange={handleChange}
-                  required
-                />
-              </label>
-            </div>
-
-            <div className="form-row">
-              <label>
-                PDF:
-                <input
-                  type="file"
-                  accept="application/pdf"
-                  onChange={handleFileChange}
-                  required
-                />
-              </label>
-            </div>
-
-            <button type="submit">Submit</button>
-          </form>
-        </div>
-        <div className="image-container">
-          <h1>One click to update on IJEAE</h1>
-          <img src={sideimage} alt="Side illustration" />
-        </div>
+          <button type="submit">Update</button>
+          <button type="submit" onClick={() => navigate("/publications")}>
+            Back to Publications
+          </button>
+        </form>
       </div>
     </>
   );
 };
 
-export default Upload;
+export default UpdatePublication;
