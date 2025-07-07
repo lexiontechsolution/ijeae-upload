@@ -13,7 +13,7 @@ const Publications = () => {
   useEffect(() => {
     const fetchPublications = async () => {
       try {
-        const response = await fetch("https://dev.dine360.ca/backend/publications//");
+        const response = await fetch("https://dev.dine360.ca/backend/publications");
         if (!response.ok) throw new Error("Failed to fetch publications.");
 
         const data = await response.json();
@@ -51,7 +51,7 @@ const Publications = () => {
 
     try {
       const response = await fetch(
-        `https://dev.dine360.ca/backend/publications//${id}`,
+        `https://dev.dine360.ca/backend/publications${id}`,
         { method: "DELETE" }
       );
 
