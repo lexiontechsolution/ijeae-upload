@@ -16,19 +16,19 @@ const UpdatePublication = () => {
     content: "",
     author: "",
     specialIssue: "No",
+    doi: "",
   });
 
   const [pdfFile, setPdfFile] = useState(null);
-  const [existingPdf, setExistingPdf] = useState(null); // For existing file
+  const [existingPdf, setExistingPdf] = useState(null);
   const [volumeError, setVolumeError] = useState("");
 
   useEffect(() => {
     axios
       .get(`https://dev.dine360.ca/backend/publications/${id}`)
       .then((res) => {
-        const data = res.data?.data || res.data; // Adjust according to your backend format
-
-        console.log("Fetched update data:", res.data);
+        const data = res.data?.data || res.data;
+        console.log("Fetched update data:", data);
         setPublication({
           year: data.year || "",
           volume: data.volume || "",
@@ -36,14 +36,14 @@ const UpdatePublication = () => {
           title: data.title || "",
           content: data.content || "",
           author: data.author || "",
-          specialIssue: data.specialIssue || "No",
+          specialIssue: data.specialIssue ? "Yes" : "No",
+          doi: data.doi || "",
         });
 
         if (data.pdfUrl || data.pdf) {
           setExistingPdf(data.pdfUrl || data.pdf);
         }
       })
-
       .catch((err) => console.error("Error loading data:", err));
   }, [id]);
 
@@ -64,7 +64,7 @@ const UpdatePublication = () => {
 
   const handleFileChange = (e) => {
     setPdfFile(e.target.files[0]);
-    setExistingPdf(null); // If uploading new, remove old display
+    setExistingPdf(null);
   };
 
   const handleSubmit = async (e) => {
@@ -76,60 +76,52 @@ const UpdatePublication = () => {
     }
 
     const formData = new FormData();
-
-    for (const key in publication) {
-      formData.append(key, publication[key]);
-    }
+    formData.append("year", Number(publication.year));
+    formData.append("volume", publication.volume);
+    formData.append("issue", Number(publication.issue));
+    formData.append("title", publication.title);
+    formData.append("content", publication.content);
+    formData.append("author", publication.author);
+    formData.append("specialIssue", publication.specialIssue === "Yes");
+    formData.append("doi", publication.doi);
 
     if (pdfFile) {
       formData.append("pdf", pdfFile);
     }
 
-    // try {
-    //   await axios.put(`https://eeman.in:15002/publications/${id}`, formData, {
-    //     headers: {
-    //       "Content-Type": "multipart/form-data",
-    //     },
-    //   });
-
-    //   alert("Publication updated successfully");
-    //   navigate("/publications");
-    // } catch (error) {
-    //   console.error("Update failed:", error);
-    //   alert("Update failed.");
-    // }
-
-    try {
-      const res = await axios.put(
-        `https://dev.dine360.ca/backend/publications/${id}`,
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
+    try{
+      const res = await axios.post(
+          `https://dev.dine360.ca/backend/publications/${id}/update`,
+        formData
       );
 
-      alert("Publication updated successfully");
 
-      // Update state with latest data returned from backend
-      if (res.data && res.data.data) {
-        setPublication({
-          year: res.data.data.year || "",
-          volume: res.data.data.volume || "",
-          issue: res.data.data.issue || "",
-          title: res.data.data.title || "",
-          content: res.data.data.content || "",
-          author: res.data.data.author || "",
-          specialIssue: res.data.data.specialIssue || "No",
-        });
+      const updatedData = res.data?.data || res.data;
 
-        // Also update existing PDF if changed
-        if (res.data.data.pdfUrl) {
-          setExistingPdf(res.data.data.pdfUrl);
-        }
+      setPublication({
+        year: updatedData.year,
+        volume: updatedData.volume,
+        issue: updatedData.issue,
+        title: updatedData.title,
+        content: updatedData.content,
+        author: updatedData.author,
+        specialIssue: updatedData.specialIssue ? "Yes" : "No",
+        doi: updatedData.doi || "",
+      });
+
+      if (updatedData.pdfUrl || updatedData.pdf) {
+        setExistingPdf(updatedData.pdfUrl || updatedData.pdf);
       }
 
-      // Optionally stay on the page or navigate
-      // navigate("/publications");
+      const refetched = await axios.get(`https://dev.dine360.ca/backend/publications/${id}`);
+      setPublication(refetched.data?.data || refetched.data);
+
+      console.log("Updated publication:", updatedData);
+      alert("Publication updated successfully!");
+
+      setTimeout(() => {
+        navigate("/publications");
+      }, 3000);
     } catch (error) {
       console.error("Update failed:", error);
       alert("Update failed.");
@@ -225,32 +217,44 @@ const UpdatePublication = () => {
           </label>
 
           <label>
-            PDF File:
-            {existingPdf && (
-              <div className="pdf-preview">
-                <a href={existingPdf} target="_blank" rel="noopener noreferrer">
-                  View Existing PDF
-                </a>
-                <button
-                  type="button"
-                  onClick={() => setExistingPdf(null)}
-                  className="remove-pdf-button"
-                >
-                  Remove PDF
-                </button>
-              </div>
-            )}
-            {!existingPdf && (
-              <input
-                type="file"
-                accept="application/pdf"
-                onChange={handleFileChange}
-              />
-            )}
+            DOI Link:
+            <input
+              type="text"
+              name="doi"
+              placeholder="https://doi.org/xxxx"
+              value={publication.doi}
+              onChange={handleChange}
+            />
           </label>
 
+          <label>
+  PDF File:
+  {existingPdf && (
+    <div className="pdf-preview">
+      <a href={`/view-pdf/${id}`} target="_blank" rel="noopener noreferrer">
+        View Existing PDF
+      </a>
+      <button
+        type="button"
+        onClick={() => setExistingPdf(null)}
+        className="remove-pdf-button"
+      >
+        Remove PDF
+      </button>
+    </div>
+  )}
+  {!existingPdf && (
+    <input
+      type="file"
+      accept="application/pdf"
+      onChange={handleFileChange}
+    />
+  )}
+</label>
+
+
           <button type="submit">Update</button>
-          <button type="submit" onClick={() => navigate("/publications")}>
+          <button type="button" onClick={() => navigate("/publications")}>
             Back to Publications
           </button>
         </form>
