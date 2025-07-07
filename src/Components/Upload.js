@@ -77,7 +77,7 @@ const Upload = () => {
       console.log("pdf", pdfFile);
 
       const response = await axios.post(
-        "https://dev.dine360.ca/backend/publications/",
+        "https://dev.dine360.ca/backend/publications",
 
         data,
         {
