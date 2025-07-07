@@ -51,7 +51,7 @@ const Publications = () => {
 
     try {
       const response = await fetch(
-        `https://dev.dine360.ca/backend/publications${id}`,
+        `https://dev.dine360.ca/backend/publications/${id}`,
         { method: "DELETE" }
       );
 
