@@ -13,8 +13,10 @@ const Upload = () => {
     title: "",
     content: "",
     author: "",
-    specialIssue: "No",
+    isSpecialIssue: "No",
+    doi: "", 
     pdf: "",
+
   });
 
   const [pdfFile, setPdfFile] = useState(null);
@@ -25,7 +27,7 @@ const Upload = () => {
     const { name, value } = e.target;
 
     if (name === "volume") {
-      const volumeRegex = /^\d+\(\d+\)$/; // Volume format like 1(1)
+      const volumeRegex = /^\d+\(\d+\)$/; // Format: 1(1)
       if (!volumeRegex.test(value)) {
         setVolumeError("Please follow the format: X(Y) e.g., 1(1)");
       } else {
@@ -41,10 +43,6 @@ const Upload = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-
-    if (file) {
-      console.log("File Selected:", file); // Debugging
-    }
 
     if (file && file.type === "application/pdf") {
       setPdfFile(file);
@@ -66,19 +64,21 @@ const Upload = () => {
     data.append("year", formData.year);
     data.append("volume", formData.volume);
     data.append("issue", formData.issue);
-    data.append("specialissue", formData.specialIssue);
+    data.append("isSpecialIssue", formData.isSpecialIssue === "Yes");
     data.append("title", formData.title);
     data.append("content", formData.content);
     data.append("author", formData.author);
+    data.append("doi", formData.doi); // Append DOI
     data.append("pdf", pdfFile);
 
+    // Console log all key-value pairs in FormData
+  console.log("FormData being submitted:");
+  for (let [key, value] of data.entries()) {
+    console.log(`${key}:`, value);
+  }
     try {
-      console.log("Form Data:", formData);
-      console.log("pdf", pdfFile);
-
       const response = await axios.post(
         "https://dev.dine360.ca/backend/publications/",
-
         data,
         {
           headers: {
@@ -87,11 +87,12 @@ const Upload = () => {
         }
       );
 
-      console.log("Publication submitted:", response.data);
       alert("Publication submitted successfully!");
     } catch (error) {
-      console.error("Error response:", error.response?.data || error.message);
-      console.error("Error submitting publication:", error);
+      console.error(
+        "Error submitting publication:",
+        error.response?.data || error.message
+      );
       alert("Failed to submit publication.");
     }
   };
@@ -139,8 +140,8 @@ const Upload = () => {
               <label>
                 Special Issue:
                 <select
-                  name="specialIssue"
-                  value={formData.specialIssue}
+                  name="isSpecialIssue"
+                  value={formData.isSpecialIssue}
                   onChange={handleChange}
                   required
                 >
@@ -176,12 +177,37 @@ const Upload = () => {
 
             <div className="form-row">
               <label>
+                DOI:
+                <input
+                  type="text"
+                  name="doi"
+                  placeholder="https://doi.org/xxxx"
+                  value={formData.doi}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
+            </div>
+
+            <div className="form-row">
+              <label>
                 Content:
                 <textarea
                   name="content"
                   value={formData.content}
                   onChange={handleChange}
                   required
+                  style={{
+                    width: "100%",
+                    height: "120px",
+                    padding: "10px",
+                    border: "1px solid #ccc",
+                    borderRadius: "5px",
+                    resize: "vertical",
+                    fontSize: "14px",
+                    fontFamily: "inherit",
+                  }}
+                  placeholder="Enter the content of the publication"
                 />
               </label>
             </div>
