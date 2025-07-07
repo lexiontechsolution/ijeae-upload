@@ -24,7 +24,7 @@ const UpdatePublication = () => {
 
   useEffect(() => {
     axios
-      .get(`https://eeman.in:15002/publications/${id}`)
+      .get(`https://dev.dine360.ca/backend/publications/${id}`)
       .then((res) => {
         const data = res.data?.data || res.data; // Adjust according to your backend format
 
@@ -101,7 +101,7 @@ const UpdatePublication = () => {
 
     try {
       const res = await axios.put(
-        `https://eeman.in:15002/publications/${id}`,
+        `https://dev.dine360.ca/backend/publications/${id}`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
