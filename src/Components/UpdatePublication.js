@@ -25,7 +25,7 @@ const UpdatePublication = () => {
 
   useEffect(() => {
     axios
-      .get(`https://dev.dine360.ca/backend/publications/${id}`)
+      .get(`https://dev.dine360.ca/backend/publications/publications/${id}`)
       .then((res) => {
         const data = res.data?.data || res.data;
         console.log("Fetched update data:", data);
@@ -91,7 +91,7 @@ const UpdatePublication = () => {
 
     try{
       const res = await axios.post(
-          `https://dev.dine360.ca/backend/publications/${id}/update`,
+          `https://dev.dine360.ca/backend/publications/publications/${id}/update`,
         formData
       );
 
