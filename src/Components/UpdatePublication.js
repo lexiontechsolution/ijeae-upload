@@ -8,6 +8,8 @@ const UpdatePublication = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const API_BASE = "https://dev.dine360.ca/backend/publications";
+
   const [publication, setPublication] = useState({
     year: "",
     volume: "",
@@ -24,8 +26,7 @@ const UpdatePublication = () => {
   const [volumeError, setVolumeError] = useState("");
 
   useEffect(() => {
-    axios
-      .get(`https://dev.dine360.ca/backend/publications/publications/${id}`)
+   axios.get(`${API_BASE}/publications/${id}`)
       .then((res) => {
         const data = res.data?.data || res.data;
         console.log("Fetched update data:", data);
@@ -90,10 +91,7 @@ const UpdatePublication = () => {
     }
 
     try{
-      const res = await axios.post(
-          `https://dev.dine360.ca/backend/publications/publications/${id}/update`,
-        formData
-      );
+      const res = await axios.post(`${API_BASE}/publications/${id}/update`, formData);
 
 
       const updatedData = res.data?.data || res.data;
@@ -113,7 +111,7 @@ const UpdatePublication = () => {
         setExistingPdf(updatedData.pdfUrl || updatedData.pdf);
       }
 
-      const refetched = await axios.get(`https://dev.dine360.ca/backend/publications/${id}`);
+      const refetched = await axios.get(`${API_BASE}/publications/${id}`);
       setPublication(refetched.data?.data || refetched.data);
 
       console.log("Updated publication:", updatedData);
