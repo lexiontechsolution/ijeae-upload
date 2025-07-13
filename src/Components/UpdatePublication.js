@@ -91,7 +91,7 @@ const UpdatePublication = () => {
 
     try{
       const res = await axios.post(
-          `https://dev.dine360.ca/backend/publications/publications/${id}/update`,
+          `https://dev.dine360.ca/backend/publications/${id}/update`,
         formData
       );
 
